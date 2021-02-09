@@ -11,14 +11,8 @@
     <el-table-column label="操作">
       <template slot-scope="scope">
         <el-button type="primary" plain size="mini" @click="handerDetail(scope.row.id)">查看</el-button>
-        <el-button
-          type="danger"
-          v-permission="{ permission: '删除Banner', type: 'disabled' }"
-          size="mini"
-          plain
-          @click="handlerRemove"
-          >删除</el-button
-        >
+        <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
+                   size="mini" plain @click="handlerRemove(scope.row.id)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -57,13 +51,42 @@ export default {
         banner.create_time = getSlashYMDHMS(banner.create_time)
       })
     },
+    /**
+     * 点击‘查看’按钮触发的事件
+     */
     handerDetail(data) {
       console.log('触发查看操作')
       console.log(data)
       this.detailFlag = true
       this.detailId = data
     },
-    handlerRemove() {},
+    /**
+     * 点击 ‘删除’ 按钮触发的事件
+     */
+    handlerRemove(id) {
+      console.log('触发删除操作')
+      console.log(id)
+      this.$confirm('此操作将永久删除当前记录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const res = await Banner.delete(id)
+        this.$message({
+          type: res.code === 3 ? 'success' : 'error',
+          message: res.code === 3 ? '删除成功!' : '删除失败，请稍后重试~'
+        })
+        // 重新刷新一遍页面数据
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    /**
+     * 点击‘返回’按钮，监听到的事件
+     */
     detailCloseEmit() {
       console.log('banner-list 中已经监听到close')
       this.detailFlag = false

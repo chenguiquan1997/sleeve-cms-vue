@@ -5,7 +5,7 @@ const adminRouter = {
   type: 'folder',
   icon: 'iconfont icon-huiyuanguanli',
   filePath: 'view/admin/',
-  order: null,
+  order: 2,
   inNav: true,
   permission: ['超级管理员独有权限'],
   children: [

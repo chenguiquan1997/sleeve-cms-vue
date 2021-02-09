@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="itemFlag">
+  <div class="container" v-if="!itemFlag">
     <div class="top_container">
       <div class="title">Banner详情</div>
       <span class="rollback" @click="rollbackClick"><i class="iconfont icon-fanhui"></i> 返回</span>
@@ -38,7 +38,7 @@
     <el-divider class="item-divider"></el-divider>
     <div class="item_top_container">
       <div class="title">Banner-Item列表</div>
-      <el-button class="add_item_btn" type="primary" plain @click="addItemClick">添加Banner-Item</el-button>
+      <el-button class="add_item_btn" type="primary" plain @click="addBannerItem">添加Banner-Item</el-button>
     </div>
     <el-table :data="bannerItems" style="width: 100%">
       <el-table-column fixed prop="id" label="id" width="80"></el-table-column>
@@ -64,7 +64,9 @@
       </el-table-column>
     </el-table>
   </div>
-  <item-detail v-else @item-close-emit="itemCloseEmit" :init-data="itemData"></item-detail>
+<!--  <banner-item v-else @item-close-emit="itemCloseEmit" :init-data="itemData"></banner-item>-->
+  <banner-item v-else @item-close-emit="itemCloseEmit" :id="itemId" :is-create="isCreate"
+               :banner-id="this.bannerDetailData.id"></banner-item>
 </template>
 
 <script>
@@ -72,7 +74,7 @@ import BannerList from './banner-list'
 import { Banner } from '../../model/banner'
 import UploadImgs from '../../component/base/upload-image/index'
 import { getSlashYMDHMS } from '../../util/date-1'
-import ItemDetail from './item-detail'
+import BannerItem from './banner-item'
 
 export default {
   name: 'banner-detail',
@@ -82,7 +84,7 @@ export default {
     },
   },
   components: {
-    ItemDetail,
+    BannerItem,
     UploadImgs,
     // eslint-disable-next-line vue/no-unused-components
     BannerList,
@@ -157,10 +159,8 @@ export default {
      */
     handlerEditItem(data) {
       console.log('点击编辑按钮，接收到的数据')
-      console.log(data)
-      console.log(this.itemFlag)
-      this.itemFlag = false
-      this.itemData = data
+      this.itemFlag = true
+      this.itemId = data.id
     },
     /**
      * 删除指定BannerItem
@@ -168,25 +168,37 @@ export default {
     handlerRemoveItem() {
       console.log('删除指定BannerItem')
     },
+    /**
+     * banner-item 页面点击 ‘返回’时，触发的操作
+     */
     itemCloseEmit() {
-      this.itemFlag = true
+      this.itemFlag = false
+      this.isCreate = false
     },
-    addItemClick() {
+    /**
+     * 添加 banner-item
+     */
+    addBannerItem() {
       console.log('添加banner-item')
+      this.itemFlag = true
+      this.isCreate = true
     },
   },
   data() {
     return {
       bannerDetailData: null,
-      itemFlag: true,
+      // 是否显示banner-item组件的标记
+      itemFlag: false,
+      // 是否为创建banner-item的标记
+      isCreate: false,
       bannerItems: null,
-      itemData: null,
+      itemId: null,
     }
   },
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
   margin-bottom: 100px;
 }
@@ -194,14 +206,14 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  color: #3963bc;
+  color: $theme;
 }
 .rollback {
   cursor: pointer;
 }
 .title {
   text-align: center;
-  color: #3963bc;
+  color: $theme;
 }
 .form_container {
   width: 600px;

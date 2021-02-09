@@ -5,7 +5,7 @@ const bannerRouter = {
   type: 'folder', // 类型: folder:表明是一个主菜单，下面还有子菜单；tab, view:表示是一个舞台
   icon: 'iconfont icon-tushuguanli',
   filePath: 'view/banner/', // 文件路径
-  order: null,
+  order: 3,
   inNav: true,
   children: [
     {

@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import { get, put, _delete } from '../lin/plugin/axios'
+import { get, put, _delete, post } from '../lin/plugin/axios'
 
 class Banner {
   /**
@@ -38,21 +38,52 @@ class Banner {
   }
 
   /**
-   * 更新 banner-item
-   * @param data
+   * 逻辑删除 banner
+   * @param id
    * @returns {Promise<AxiosResponse<any>>}
    */
-  static async updateItem(data) {
-    const res = await put('v1/banner/item/update', data)
+  static async delete(id) {
+    const res = await _delete(`v1/banner/remove/${id}`)
     return res
   }
 
   /**
-   * 获取banner-item 类型
+   * 更新 banner-item
+   * @param data
+   * @param id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async updateItem(data, id) {
+    const res = await put(`v1/banner/item/update/${id}`, data)
+    return res
+  }
+
+  /**
+   * 创建 banner-item
+   * @param data 请求体参数
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async createItem(data) {
+    const res = await post('v1/banner/item/add', data)
+    return res
+  }
+
+  /**
+   * 获取 banner-item 类型
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async searchtypes() {
     const res = await get('v1/banner/item/search/types')
+    return res
+  }
+
+  /**
+   * 根据 id 获取 指定banner-item
+   * @param id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async searchItem(id) {
+    const res = await get(`v1/banner/item/search/${id}`)
     return res
   }
 }

@@ -4,6 +4,13 @@ import bookConfig from './book' // 引入图书管理路由文件
 import bannerConfig from './banner'
 import pluginsConfig from './plugin'
 import Utils from '@/lin/util/util'
+import categoryRouter from './category'
+import gridRouter from './grid'
+import specRouter from './spec'
+import skuRouter from './sku'
+import spuRouter from './spu'
+import themeRouter from './theme'
+import activityRouter from './activity'
 
 // eslint-disable-next-line import/no-mutable-exports
 let homeRouter = [
@@ -25,7 +32,7 @@ let homeRouter = [
     filePath: 'view/log/log.vue',
     inNav: true,
     icon: 'iconfont icon-rizhiguanli',
-    order: 2,
+    order: 11,
     permission: ['查询所有日志'],
   },
   {
@@ -46,9 +53,15 @@ let homeRouter = [
     inNav: false,
     icon: 'iconfont icon-rizhiguanli',
   },
-  bookConfig,
   adminConfig,
   bannerConfig,
+  categoryRouter,
+  gridRouter,
+  specRouter,
+  skuRouter,
+  spuRouter,
+  themeRouter,
+  activityRouter
 ]
 
 const plugins = [...pluginsConfig]
