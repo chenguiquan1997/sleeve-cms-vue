@@ -21,15 +21,13 @@
         ></upload-imgs>
       </el-form-item>
       <el-form-item label="描述" prop="description">
-        <el-input
-          v-model="bannerDetailData.description"
-          type="textarea"
-          maxlength="30"
-          placeholder="请输入当前Banner的描述"
+        <el-input v-model="bannerDetailData.description" type="textarea"
+          maxlength="30" placeholder="请输入当前Banner的描述"
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitClick">保存</el-button>
+        <el-button type="primary" @click="submitClick"
+                   v-permission="{permission: '创建Banner', type: 'disabled'}">保存</el-button>
         <!--          <el-button type="primary" @click="resetForm('form')">重置</el-button>-->
         <el-button @click="resetForm('form')">重置</el-button>
       </el-form-item>
@@ -38,7 +36,9 @@
     <el-divider class="item-divider"></el-divider>
     <div class="item_top_container">
       <div class="title">Banner-Item列表</div>
-      <el-button class="add_item_btn" type="primary" plain @click="addBannerItem">添加Banner-Item</el-button>
+      <el-button class="add_item_btn" type="primary" plain @click="addBannerItem"
+                v-permission="{permission: '创建Banner', type: 'disabled'}">
+        添加Banner-Item</el-button>
     </div>
     <el-table :data="bannerItems" style="width: 100%">
       <el-table-column fixed prop="id" label="id" width="80"></el-table-column>
@@ -52,14 +52,8 @@
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
           <el-button @click="handlerEditItem(scope.row)" type="primary" size="mini">编辑</el-button>
-          <el-button
-            type="danger"
-            v-permission="{ permission: '删除Banner', type: 'disabled' }"
-            size="mini"
-            plain
-            @click="handlerRemoveItem"
-            >删除</el-button
-          >
+          <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
+                     size="mini" plain @click="handlerRemoveItem">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -207,6 +201,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   color: $theme;
+  margin-top: 30px;
 }
 .rollback {
   cursor: pointer;

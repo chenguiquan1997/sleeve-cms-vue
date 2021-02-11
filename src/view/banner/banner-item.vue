@@ -24,10 +24,11 @@
         </el-autocomplete>
       </el-form-item>
       <el-form-item label="图片">
-        <upload-imgs ref="uploadImg" :value="[{ display: formData.img }]"></upload-imgs>
+        <upload-imgs ref="uploadImg" :value="[{ display: formData.img }]" :max-num="1"></upload-imgs>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="saveClick">保存</el-button>
+        <el-button type="primary" @click="saveClick"
+        v-permission="{permission: '创建Banner', type: 'disabled'}">保存</el-button>
         <el-button type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>
@@ -129,6 +130,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-top: 30px;
 }
 .title {
   color: $theme;

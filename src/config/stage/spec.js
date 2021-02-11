@@ -5,7 +5,7 @@ const specRouter = {
   type: 'folder', // 类型: folder:表明是一个主菜单，下面还有子菜单；tab, view:表示是一个舞台
   icon: 'el-icon-paperclip',
   filePath: 'view/spec/', // 文件路径
-  order: 5,
+  order: 6,
   inNav: true,
   children: [
     {

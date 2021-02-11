@@ -8,12 +8,22 @@ class Banner {
    * @param count 每页查询数据量
    * @returns {Promise<AxiosResponse<any>>}
    */
-  static async getBanners(page = 0, count = 10) {
+  static async getBanners(page = 0, count = 2) {
     const bannerList = await get('v1/banner/all', {
       page,
       count,
     })
     return bannerList
+  }
+
+  /**
+   * 添加 banner
+   * @param data
+   * @returns {Promise<void>}
+   */
+  static async saveBanner(data) {
+    const res = await post('v1/banner/save', data)
+    return res
   }
 
   /**

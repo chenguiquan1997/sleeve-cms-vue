@@ -23,9 +23,9 @@ import '@/assets/style/realize/element-variable.scss'
 import 'element-ui/lib/theme-chalk/display.css'
 // eslint-disable-next-line import/order
 import locale from 'element-ui/lib/locale/lang/en'
-
-Vue.use(ElementUI, { locale })
-
+// 需要支持国际化时，启用当前配置
+// Vue.use(ElementUI, { locale })
+Vue.use(ElementUI)
 Vue.config.productionTip = false
 
 // Vue.use(ElementUI)
