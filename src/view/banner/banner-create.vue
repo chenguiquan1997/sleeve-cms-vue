@@ -13,9 +13,7 @@
         <el-input v-model="formData.title" placeholder="请输入标题"></el-input>
       </el-form-item>
       <el-form-item label="主图" prop="img">
-        <upload-imgs ref="mainImgRef" :value="[{ display: formData.img }]"
-          :sortable="true" :max-num="1"
-        ></upload-imgs>
+        <upload-imgs ref="mainImgRef" :value="initData" :sortable="true" :max-num="1"></upload-imgs>
       </el-form-item>
       <el-form-item label="描述" prop="description">
         <el-input v-model="formData.description" type="textarea"
@@ -49,17 +47,17 @@ export default {
       console.log(this.formData)
       const res = await Banner.saveBanner(this.formData)
       console.log(res)
-      // if (res.code === 1) {
-      //   this.$message({
-      //     message: '保存成功',
-      //     type: 'success',
-      //   })
-      // } else {
-      //   this.$message({
-      //     message: res.code === 20004 ? 'Banner名称重复，请修改~' : '保存失败，请稍后重试~',
-      //     type: 'error',
-      //   })
-      // }
+      if (res.code === 1) {
+        this.$message({
+          message: '保存成功',
+          type: 'success',
+        })
+      } else {
+        this.$message({
+          message: res.code === 20004 ? 'Banner名称重复，请修改~' : '保存失败，请稍后重试~',
+          type: 'error',
+        })
+      }
     }
   },
   data() {
@@ -69,7 +67,8 @@ export default {
         title: '',
         img: '',
         description: ''
-      }
+      },
+      initData: []
     }
   }
 }

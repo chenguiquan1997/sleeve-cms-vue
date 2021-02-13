@@ -27,7 +27,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitClick"
-                   v-permission="{permission: '创建Banner', type: 'disabled'}">保存</el-button>
+                   v-permission="{permission: '创建Banner', type: 'disabled'}">更新</el-button>
         <!--          <el-button type="primary" @click="resetForm('form')">重置</el-button>-->
         <el-button @click="resetForm('form')">重置</el-button>
       </el-form-item>
@@ -125,11 +125,11 @@ export default {
       console.log(res)
       if (res.code === 2) {
         this.$message({
-          message: '保存成功',
+          message: '更新成功',
           type: 'success',
         })
       } else {
-        this.$message.error('保存失败，请稍后重试')
+        this.$message.error('更新失败，请稍后重试')
       }
     },
     /**
