@@ -1,7 +1,7 @@
 <template>
   <div class="container" v-if="!showDetailFlag">
     <div class="top_container">
-      <div class="title">一级分类列表</div>
+      <div class="title">{{superCategoryName}} 分类列表</div>
       <el-button class="add_category_btn" type="primary" plain @click="addCategory"
                  v-permission="{permission: '创建分类', type: 'disabled'}">
         添加分类</el-button>
@@ -17,7 +17,6 @@
       <el-table-column prop="create_time" label="创建时间" width="160"></el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
-          <el-button @click="handlerChilderns(scope.row)" type="primary" plain size="mini">子分类</el-button>
           <el-button @click="handlerEditItem(scope.row.id)" type="primary" plain size="mini">查看</el-button>
           <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
                      size="mini" plain @click="handlerRemoveItem">删除</el-button>
@@ -31,19 +30,21 @@
 </template>
 
 <script>
+import CategoryDetail from './category-detail'
+import Page from '../../component/custom/page'
 import { Category } from '../../model/category'
 import { getSlashYMDHMS } from '../../util/date-1'
-import Page from '../../component/custom/page'
-import CategoryDetail from './category-detail'
 
 export default {
-  name: 'category-list',
-  components: { CategoryDetail, Page },
+  name: 'sub-category-list',
+  components: { Page, CategoryDetail },
   props: {
 
   },
   created() {
-    this.getOneLevel()
+    this.getTwoLevel()
+    this.$data.superCategoryName = this.$route.query.categoryName
+    this.$data.superCategoryId = this.$route.params.id
   },
   methods: {
     rollbackEmit() {
@@ -52,8 +53,8 @@ export default {
     /**
      * 获取一级分类数据
      */
-    async getOneLevel() {
-      const res = await Category.getOneLevelCategory()
+    async getTwoLevel() {
+      const res = await Category.
       console.log(res)
       // 处理 日期 和 状态
       this.formatDateAndOnline(res.items)
@@ -96,13 +97,6 @@ export default {
     },
     handlerRemoveItem() {
       console.log('触发删除操作')
-    },
-    handlerChilderns(row) {
-      console.log('查询子分类')
-      this.$router.push({
-        path: `/sub-category/${row.id}/list`,
-        query: { categoryName: row.name },
-      })
     }
   },
   data() {
@@ -112,25 +106,14 @@ export default {
       pageSize: 3,
       removeFlag: false,
       showDetailFlag: false,
-      categoryId: 1
+      categoryId: 1,
+      superCategoryName: null,
+      superCategoryId: 0
     }
   }
 }
 </script>
 
-<style scoped lang="scss">
-  .container {
-    padding: 0px 30px 10px 30px;
-  }
-  .top_container {
-    height: 60px;
-    display: flex;
-    align-items: center;
-  }
-  .title {
-    color: $theme;
-  }
-  .add_category_btn {
-    margin-left: 20px;
-  }
+<style scoped>
+
 </style>

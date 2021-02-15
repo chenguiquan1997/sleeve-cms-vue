@@ -17,6 +17,15 @@ const categoryRouter = {
       inNav: true,
       icon: 'iconfont icon-tushuguanli',
     },
+    {
+      title: '子分类列表',
+      type: 'tab',
+      name: 'subCategoryList',
+      route: '/sub-category/:id/list',
+      filePath: 'view/category/sub-category-list.vue',
+      inNav: false,
+      icon: '',
+    },
   ],
 }
 export default categoryRouter
