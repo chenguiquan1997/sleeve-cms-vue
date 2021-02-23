@@ -104,6 +104,9 @@ export default {
     rollbackClick() {
       this.$emit('rollback-event')
     },
+    /**
+     * 根据 id 获取当前分类详情
+     */
     async getDetail() {
       const res = await Category.getCategoryDetail(this.id)
       this.$data.formData = res

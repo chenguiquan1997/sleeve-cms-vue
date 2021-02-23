@@ -20,7 +20,7 @@
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
           <el-button @click="handlerEditItem(scope.row.id)" type="primary" plain size="mini">查看</el-button>
-          <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
+          <el-button type="danger" v-permission="{ permission: '删除分类', type: 'disabled' }"
                      size="mini" plain @click="handlerRemoveItem">删除</el-button>
         </template>
       </el-table-column>

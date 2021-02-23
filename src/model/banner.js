@@ -96,6 +96,16 @@ class Banner {
     const res = await get(`v1/banner/item/search/${id}`)
     return res
   }
+
+  /**
+   * 根据 id 删除指定 banner-item
+   * @param id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async removeItem(id) {
+    let res = await _delete(`v1/banner/item/remove/${id}`)
+    return res
+  }
 }
 export {
   // eslint-disable-next-line import/prefer-default-export

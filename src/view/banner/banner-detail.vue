@@ -15,7 +15,7 @@
       <el-form-item label="主图" prop="img">
         <upload-imgs
           ref="mainImgRef"
-          :value="[{ display: bannerDetailData.img }]"
+          :value="initData"
           :sortable="true"
           :max-num="1"
         ></upload-imgs>
@@ -53,7 +53,7 @@
         <template slot-scope="scope">
           <el-button @click="handlerEditItem(scope.row)" type="primary" size="mini">编辑</el-button>
           <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
-                     size="mini" plain @click="handlerRemoveItem">删除</el-button>
+                     size="mini" plain @click="handlerRemoveItem(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,6 +103,7 @@ export default {
       const bannerAndItems = await Banner.getBannerDetailById(id)
       console.log(bannerAndItems)
       this.$data.bannerDetailData = bannerAndItems
+      this.$data.initData = [{ display: bannerAndItems.img }]
       console.log('items 数据')
       console.log(bannerAndItems.banner_items)
       this.formatDate(bannerAndItems.banner_items)
@@ -158,9 +159,17 @@ export default {
     },
     /**
      * 删除指定BannerItem
-     */
-    handlerRemoveItem() {
+     */ async handlerRemoveItem(id) {
       console.log('删除指定BannerItem')
+      let res = await Banner.removeItem(id)
+      console.log(res)
+      if (res.code === 3) {
+        this.$message({
+          type: res.code === 3 ? 'success' : 'error',
+          message: res.code === 3 ? '删除成功!' : '删除失败，请稍后重试~'
+        })
+      }
+      this.getBannerDetailById(this.detailId)
     },
     /**
      * banner-item 页面点击 ‘返回’时，触发的操作
@@ -187,6 +196,8 @@ export default {
       isCreate: false,
       bannerItems: null,
       itemId: null,
+      // 用于保存图片
+      initData: []
     }
   },
 }
