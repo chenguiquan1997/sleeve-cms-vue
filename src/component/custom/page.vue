@@ -1,7 +1,7 @@
 <template>
   <div class="paging_container">
     <el-pagination :background="true" layout="total, prev, pager, next, jumper" :total="this.total"
-                   :page-size="this.pageSize" @current-change="handleCurrentChange"></el-pagination>
+                   :page-size="this.pageSize" :current-page="this.currentPage" @current-change="handleCurrentChange"></el-pagination>
   </div>
 </template>
 
@@ -20,6 +20,10 @@ export default {
     removeFlag: {
       Type: Boolean,
       Default: false
+    },
+    currentPage: {
+      Type: Number,
+      Default: 1
     }
   },
   created() {
@@ -55,10 +59,10 @@ export default {
       console.log(`当前页: ${val}`)
       // 因为服务端是从第0页开始，前端是从第1页显示，所以需要做-1操作
       this.$data.currPage = val
-      const page = val - 1
+      const page = val
       console.log(`发送给后端的页码：${page}`)
       // this.getBanners(page, this.pageSize)
-      // 组件内部发出一个点击事件，然后父组件中调用‘获取当前页数据的方法’
+      // 组件内部发出一个点击事件，传给父组件的数据是页码page，然后父组件中调用‘获取当前页数据的方法’
       this.$emit('page-event', page)
     },
     /**

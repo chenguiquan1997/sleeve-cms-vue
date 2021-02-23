@@ -21,7 +21,7 @@
       </el-table-column>
     </el-table>
     <!--    分页组件-->
-    <page @page-event="pageEmit"
+    <page @page-event="pageEmit" :current-page="this.$data.page"
           :total="this.total" :page-size="this.pageSize" :remove-flag="this.removeFlag"></page>
   </div>
   <banner-detail v-else @detail-close-emit="detailCloseEmit" :detail-id="detailId"></banner-detail>
@@ -40,7 +40,7 @@ export default {
     BannerDetail,
   },
   created() {
-    this.getBanners(0, this.pageSize)
+    this.getBanners(1, this.pageSize)
   },
   methods: {
     /**
@@ -111,13 +111,14 @@ export default {
       this.detailFlag = false
     },
     // 用户点击 ‘页码’时，切换页面数据的事件
-    pageEmit(count) {
+    pageEmit(page) {
       console.log('pageEmit方法中监听到的事件')
-      console.log(count)
+      console.log(page)
       // 当前页= count + 1
-      this.$data.currPage = count + 1
+      this.$data.page = page
+      this.$data.currPage = page + 1
       console.log(`当前页：${this.$data.currPage}`)
-      this.getBanners(count, this.pageSize)
+      this.getBanners(page, this.pageSize)
     }
     // /**
     //  * 当用户点击具体页码时，触发的事件
@@ -166,7 +167,9 @@ export default {
       pageSize: 3,
       currPage: 1,
       // 用户点击’删除‘操作时，触发的标记，需要传到page组件中
-      removeFlag: false
+      removeFlag: false,
+      // 保存当前分页组件的页码
+      page: -1
     }
   },
 }

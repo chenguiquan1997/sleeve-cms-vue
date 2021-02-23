@@ -8,7 +8,7 @@ class Banner {
    * @param count 每页查询数据量
    * @returns {Promise<AxiosResponse<any>>}
    */
-  static async getBanners(page = 0, count = 2) {
+  static async getBanners(page = 1, count = 3) {
     const bannerList = await get('v1/banner/all', {
       page,
       count,
