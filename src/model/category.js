@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import da from 'element-ui/src/locale/lang/da'
-import { get, post, put, _delete} from '../lin/plugin/axios'
+import { get, post, put, _delete } from '../lin/plugin/axios'
 
 class Category {
   /**
@@ -66,6 +66,26 @@ class Category {
    */
   static async getName(id) {
     let res = await get(`v1/category/name/${id}`)
+    return res
+  }
+
+  /**
+   * 根据 id 修改指定六宫格数据
+   * @param data
+   * @returns {Promise<void>}
+   */
+  static async updateGridById(data) {
+    let res = await put('v1/category/grid/update', data)
+    return res
+  }
+
+  /**
+   * 根据 id 删除指定六宫格数据
+   * @param id
+   * @returns {Promise<void>}
+   */
+  static async removeGridById(id) {
+    let res = await put(`v1/category/grid/remove/${id}`)
     return res
   }
 }

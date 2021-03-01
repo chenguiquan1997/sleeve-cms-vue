@@ -8,14 +8,14 @@
     </div>
     <el-table :data="categoryList" style="width: 100%" :stripe="true" :cell-style="cellStyle">
       <el-table-column fixed prop="id" label="id" width="80"></el-table-column>
-      <el-table-column prop="img" label="图片">
+      <el-table-column prop="img" label="图片" width="200">
         <el-image v-if="scope.row.img" slot-scope="scope" :src="scope.row.img"></el-image>
       </el-table-column>
       <el-table-column prop="name" label="名称" width="150"></el-table-column>
       <el-table-column prop="online" label="状态" width="120"></el-table-column>
       <el-table-column prop="description" label="描述"></el-table-column>
-      <el-table-column prop="create_time" label="创建时间" width="160"></el-table-column>
-      <el-table-column fixed="right" label="操作">
+      <el-table-column prop="create_time" label="创建时间" width="180"></el-table-column>
+      <el-table-column fixed="right" label="操作" width="230">
         <template slot-scope="scope">
           <el-button @click="handlerChilderns(scope.row)" type="primary" plain size="mini">子分类</el-button>
           <el-button @click="handlerEditItem(scope.row.id)" type="primary" plain size="mini">查看</el-button>

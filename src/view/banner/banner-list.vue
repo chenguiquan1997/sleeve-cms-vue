@@ -5,14 +5,14 @@
     </div>
     <el-table :data="bannerList" style="width: 100%" :stripe="true">
       <el-table-column prop="id" label="id" width="80"></el-table-column>
-      <el-table-column prop="img" label="图片">
+      <el-table-column prop="img" label="图片" width="180">
         <el-image v-if="scope.row.img" slot-scope="scope" :src="scope.row.img"></el-image>
       </el-table-column>
-      <el-table-column prop="name" label="名称"></el-table-column>
-      <el-table-column prop="title" label="标题"></el-table-column>
+      <el-table-column prop="name" label="名称" width="150"></el-table-column>
+      <el-table-column prop="title" label="标题" width="150"></el-table-column>
       <el-table-column prop="description" :show-overflow-tooltip="true" label="描述"></el-table-column>
       <el-table-column prop="create_time" label="创建时间" width="150"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" fixed="right" width="200">
         <template slot-scope="scope">
           <el-button type="primary" plain size="mini" @click="handerDetail(scope.row.id)">查看</el-button>
           <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"

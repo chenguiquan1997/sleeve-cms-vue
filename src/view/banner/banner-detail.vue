@@ -84,7 +84,7 @@ export default {
     BannerList,
   },
   async created() {
-    console.log('detail 中的')
+    console.log('进入banner-detail组件')
     console.log(this.detailId)
     this.getBannerDetailById(this.detailId)
   },

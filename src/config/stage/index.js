@@ -15,7 +15,7 @@ import activityRouter from './activity'
 // eslint-disable-next-line import/no-mutable-exports
 let homeRouter = [
   {
-    title: '林间有风',
+    title: '流量分析',
     type: 'view',
     name: Symbol('about'),
     route: '/about',
