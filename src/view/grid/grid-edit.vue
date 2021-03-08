@@ -65,6 +65,11 @@ export default {
       this.$data.formData.grid_img = img
       const res = await Category.updateGridById(this.$data.formData)
       console.log(res)
+      this.$message({
+        type: res.code === 2 ? 'success' : 'error',
+        message: res.code === 2 ? '更新成功!' : '更新失败，请稍后重试~'
+      })
+      this.cancelDialog()
     },
     /**
      * 点击“取消”按钮，触发的操作

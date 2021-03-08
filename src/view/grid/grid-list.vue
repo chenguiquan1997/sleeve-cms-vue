@@ -85,6 +85,7 @@ export default {
     dialogEvent() {
       this.$data.showDialogFlag = false
       this.$data.showDialogComponent = false
+      this.getGrids()
     },
     /**
      * 点击“删除”按钮，触发的操作

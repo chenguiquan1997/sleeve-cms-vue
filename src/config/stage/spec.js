@@ -17,6 +17,15 @@ const specRouter = {
       inNav: true,
       icon: 'iconfont icon-tushuguanli',
     },
+    {
+      title: '创建规格',
+      type: 'view',
+      name: 'createSpec',
+      route: '/spec/create',
+      filePath: 'view/spec/spec-create',
+      inNav: false,
+      icon: 'iconfont icon-tushuguanli',
+    },
   ],
 }
 export default specRouter
