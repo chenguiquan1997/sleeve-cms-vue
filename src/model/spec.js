@@ -1,4 +1,4 @@
-import { get, post, put } from '../lin/plugin/axios'
+import { _delete, get, post, put } from '../lin/plugin/axios'
 
 class Spec {
   /**
@@ -69,6 +69,26 @@ class Spec {
    */
   static async saveKey(data) {
     let res = await post('v1/spec/key/save', data)
+    return res
+  }
+
+  /**
+   * 删除指定规格
+   * @param id 规格id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async removeKey(id) {
+    let res = await _delete(`v1/spec/key/delete/${id}`)
+    return res
+  }
+
+  /**
+   * 删除指定规格值
+   * @param id 规格值id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async removeValue(id) {
+    let res = await _delete(`v1/spec/value/delete/${id}`)
     return res
   }
 }

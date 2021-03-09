@@ -16,7 +16,7 @@
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
           <el-button @click="handlerEditItem(scope.row.id)" type="primary" plain size="mini">查看</el-button>
-          <el-button type="danger" v-permission="{ permission: '删除Grid', type: 'disabled' }"
+          <el-button type="danger" v-permission="{ permission: '删除规格', type: 'disabled' }"
                      size="mini" plain @click="handlerRemoveItem(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -88,8 +88,39 @@ export default {
      * @param id
      */
     handlerRemoveItem(id) {
-
+      this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        let res = await this.removeKey(id)
+        console.log(res)
+        this.$message({
+          type: res.code === 3 ? 'success' : 'error',
+          message: res.code === 3 ? '删除成功!' : '删除失败，请稍后重试~'
+        })
+        // 重新刷新当前页数据
+        this.$data.removeFlag = true
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      }).finally(() => {
+        // 删除操作执行完以后，需要将 removeFlag 标记为false
+        this.$data.removeFlag = false
+      })
     },
+    /*
+    * 点击"删除"按钮触发的操作
+    * */
+    async removeKey(id) {
+      let res = await Spec.removeKey(id)
+      return res
+    },
+    /**
+     * 点击“返回”按钮触发的操作
+     */
     async rollbackEmit() {
       this.$data.showSpecDetailFlag = false
       // 从新刷新当前页面数据

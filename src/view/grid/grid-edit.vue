@@ -16,7 +16,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="updateDialog">更新</el-button>
+      <el-button @click="updateDialog" v-permission="{ permission: '创建Grid', type: 'disabled' }">更新</el-button>
       <el-button type="primary" @click="cancelDialog">取消</el-button>
     </div>
   </el-dialog>

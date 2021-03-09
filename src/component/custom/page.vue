@@ -70,7 +70,6 @@
       this.$data.currPage = val
       const page = val
       console.log(`发送给后端的页码：${page}`)
-      // this.getBanners(page, this.pageSize)
       // 组件内部发出一个点击事件，传给父组件的数据是页码page，然后父组件中调用‘获取当前页数据的方法’
       this.$emit('page-event', page)
     },
