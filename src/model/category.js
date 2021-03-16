@@ -21,7 +21,7 @@ class Category {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async getCategoryDetail(id) {
-    let res = await get(`v1/category/detail/${id}`)
+    const res = await get(`v1/category/detail/${id}`)
     return res
   }
 
@@ -33,7 +33,7 @@ class Category {
    * @returns {Promise<void>}
    */
   static async getTwoLevelCategory(page = 1, size = 2, parentId) {
-    let res = await get(`v1/category/all/twoLevel/${parentId}`, {
+    const res = await get(`v1/category/all/twoLevel/${parentId}`, {
       page, size
     })
     return res
@@ -45,7 +45,7 @@ class Category {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async updateCategoryDetail(data) {
-    let res = await put('v1/category/update', data)
+    const res = await put('v1/category/update', data)
     return res
   }
 
@@ -55,7 +55,7 @@ class Category {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async save(data) {
-    let res = await post('v1/category/save', data)
+    const res = await post('v1/category/save', data)
     return res
   }
 
@@ -65,7 +65,7 @@ class Category {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async getName(id) {
-    let res = await get(`v1/category/name/${id}`)
+    const res = await get(`v1/category/name/${id}`)
     return res
   }
 
@@ -75,7 +75,7 @@ class Category {
    * @returns {Promise<void>}
    */
   static async updateGridById(data) {
-    let res = await put('v1/category/grid/update', data)
+    const res = await put('v1/category/grid/update', data)
     return res
   }
 
@@ -85,7 +85,16 @@ class Category {
    * @returns {Promise<void>}
    */
   static async removeGridById(id) {
-    let res = await put(`v1/category/grid/remove/${id}`)
+    const res = await put(`v1/category/grid/remove/${id}`)
+    return res
+  }
+
+  /**
+   * 查询分类以及所属子分类
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async getCategoryAndChildren() {
+    const res = await get('v1/category/children')
     return res
   }
 }

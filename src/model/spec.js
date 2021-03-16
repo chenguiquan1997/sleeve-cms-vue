@@ -6,7 +6,7 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async getSpecs(page = 1, size = 3) {
-    let res = await get('v1/spec/key/all', { page, size })
+    const res = await get('v1/spec/key/all', { page, size })
     return res
   }
 
@@ -18,7 +18,7 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async getSpecValueById(id, page = 1, size = 3) {
-    let res = await get(`v1/spec/value/all/${id}`, { page, size })
+    const res = await get(`v1/spec/value/all/${id}`, { page, size })
     return res
   }
 
@@ -28,7 +28,7 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async getSpecDetailById(id) {
-    let res = await get(`v1/spec/key/${id}`)
+    const res = await get(`v1/spec/key/${id}`)
     return res
   }
 
@@ -38,7 +38,7 @@ class Spec {
    * @returns {Promise<void>}
    */
   static async updateSpecKey(data) {
-    let res = await put('v1/spec/key/update', data)
+    const res = await put('v1/spec/key/update', data)
     return res
   }
 
@@ -48,7 +48,7 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async updateSpecValue(data) {
-    let res = await put('v1/spec/value/update', data)
+    const res = await put('v1/spec/value/update', data)
     return res
   }
 
@@ -58,7 +58,7 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async searchSpecValueById(id) {
-    let res = await get(`v1/spec/value/${id}`)
+    const res = await get(`v1/spec/value/${id}`)
     return res
   }
 
@@ -68,7 +68,7 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async saveKey(data) {
-    let res = await post('v1/spec/key/save', data)
+    const res = await post('v1/spec/key/save', data)
     return res
   }
 
@@ -78,7 +78,7 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async removeKey(id) {
-    let res = await _delete(`v1/spec/key/delete/${id}`)
+    const res = await _delete(`v1/spec/key/delete/${id}`)
     return res
   }
 
@@ -88,7 +88,26 @@ class Spec {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async removeValue(id) {
-    let res = await _delete(`v1/spec/value/delete/${id}`)
+    const res = await _delete(`v1/spec/value/delete/${id}`)
+    return res
+  }
+
+  /**
+   * 获取所有规格名
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async getSpecSummary() {
+    const res = await get('v1/spec/key/summary')
+    return res
+  }
+
+  /**
+   * 根据一组id，获取可视化规格
+   * @param ids
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async getSketchSpecs(ids) {
+    const res = await get('v1/spec/key/sketch/ids', { ids })
     return res
   }
 }

@@ -19,8 +19,7 @@
           v-model="formData.type_name"
           :fetch-suggestions="querySearchAsync"
           placeholder="请输入类型"
-          @select="handleSelect"
-        >
+          @select="handleSelect">
         </el-autocomplete>
       </el-form-item>
       <el-form-item label="图片">
