@@ -6,7 +6,13 @@
 </template>
 
 <script>
-export default {
+  /**
+   * pageSize: 每页展示的数据量
+   * total: 总的数据量
+   * removeFlag: 删除某一条记录时的标记
+   * currentPage: 当前所在页码
+   */
+  export default {
   name: 'page',
   props: {
     pageSize: {
@@ -29,6 +35,9 @@ export default {
   created() {
   },
   watch: {
+    /*
+    * 用户点击“删除”按钮时，传到page组件内部触发的操作
+    * */
     removeFlag: function f() {
       console.log(`removeFlag: ${this.removeFlag}`)
       if (this.removeFlag) {
@@ -51,7 +60,7 @@ export default {
   },
   methods: {
     /**
-     * 当用户点击具体页码时，触发的事件
+     * 当用户点击具体页码时，触发的事件，会返回给父组件一个页码 page
      * @param val
      * @returns {Promise<void>}
      */
@@ -61,7 +70,6 @@ export default {
       this.$data.currPage = val
       const page = val
       console.log(`发送给后端的页码：${page}`)
-      // this.getBanners(page, this.pageSize)
       // 组件内部发出一个点击事件，传给父组件的数据是页码page，然后父组件中调用‘获取当前页数据的方法’
       this.$emit('page-event', page)
     },

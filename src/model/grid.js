@@ -6,7 +6,7 @@ class Grid {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async getGrid() {
-    let res = await get('v1/category/grid')
+    const res = await get('v1/category/grid')
     return res
   }
 
@@ -16,7 +16,7 @@ class Grid {
    * @returns {Promise<AxiosResponse<any>>}
    */
   static async getGridById(id) {
-    let res = await get(`v1/category/grid/${id}`)
+    const res = await get(`v1/category/grid/${id}`)
     return res
   }
 }

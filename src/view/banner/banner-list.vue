@@ -78,14 +78,13 @@ export default {
      * 点击 ‘删除’ 按钮触发的事件
      */
     handlerRemove(id) {
-      console.log('触发删除操作')
-      console.log(id)
       this.$confirm('此操作将永久删除当前记录, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
         const res = await Banner.delete(id)
+        console.log(res)
         this.$message({
           type: res.code === 3 ? 'success' : 'error',
           message: res.code === 3 ? '删除成功!' : '删除失败，请稍后重试~'
