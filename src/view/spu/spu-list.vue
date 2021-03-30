@@ -14,8 +14,8 @@
       </el-table-column>
       <el-table-column prop="title" label="标题" width="120"></el-table-column>
       <el-table-column prop="subtitle" label="副标题" width="180"></el-table-column>
-      <el-table-column prop="category_name" label="所属分类"></el-table-column>
-      <el-table-column prop="price" label="价格" width="120"></el-table-column>
+      <el-table-column prop="category_name" label="所属分类" width="120"></el-table-column>
+      <el-table-column prop="price" label="价格" width="100"></el-table-column>
       <el-table-column prop="online" label="是否上架" width="100"></el-table-column>
       <el-table-column prop="create_time" label="创建时间" width="150"></el-table-column>
       <el-table-column label="操作" fixed="right" width="200">
@@ -52,8 +52,8 @@ export default {
      * 分页获取 Spu 数据
      * @returns {Promise<void>}
      */
-    async getSpuList() {
-      const res = await Spu.getSpuList()
+    async getSpuList(page, count) {
+      const res = await Spu.getSpuList(page, count)
       this.$data.spuList = res.items
       this.formatDate(res.items)
       this.formatOnline(res.items)
@@ -92,24 +92,51 @@ export default {
     /**
      * 删除SPU
      */
-    handlerRemove() {
+    async handlerRemove(id) {
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const res = await Spu.removeSpu(id)
+        this.$message({
+          message: res.code === 3 ? '删除成功' : '删除失败，请稍后重试~',
+          type: res.code === 3 ? 'successs' : 'error',
+        })
+        // 重建分页
+        this.$data.removeFlag = true
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      }).finally(() => {
+        this.$data.removeFlag = false
+      })
     },
     /**
      * 点击页码触发
      */
-    pageEmit() {
+    pageEmit(page) {
+      console.log('接收点击页码事件 ')
+      console.log(page)
+      this.getSpuList(page, this.$data.pageSize)
+      this.$data.page = page
     },
     /**
      * 添加SPU
      */
     addSpu() {
-
+      this.$data.detailFlag = true
     },
     /**
      * 点击“返回”按钮时，触发的操作
      */
     rollback() {
       this.$data.detailFlag = false
+      this.$data.id = -1
+      // 重新加载当前页数据
+      this.pageEmit(this.$data.page)
     }
   },
   data() {
@@ -120,6 +147,7 @@ export default {
       page: 1,
       total: 0,
       pageSize: 5,
+      // 用于删除操作后，page组件重建分页的标记
       removeFlag: false
     }
   }

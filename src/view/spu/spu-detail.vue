@@ -18,9 +18,6 @@
       <el-form-item label="折扣价" prop="discount_price">
         <el-input v-model="formData.discount_price" placeholder="请输入当前商品折扣价"></el-input>
       </el-form-item>
-<!--      <el-form-item label="所属分类" prop="category_name">-->
-<!--        <el-input v-model="formData.category_name" placeholder="请输入所属分类"></el-input>-->
-<!--      </el-form-item>-->
       <el-form-item label="所属分类" prop="category_name">
         <el-cascader
           placeholder="试试搜索：服装..." v-model="selectedCategory" :options="categories" filterable></el-cascader>
@@ -66,7 +63,7 @@
        <el-cascader placeholder="选择规格（可多选）" v-model="specs" :props="cascaderProps"></el-cascader>
       </el-form-item>
       <el-form-item label="可视规格">
-        <el-select  size="medium"  v-model="selectedSketchSpec" placeholder="请选择" @focus="sketchSpecFocus">
+        <el-select  size="medium"  clearable v-model="selectedSketchSpec" placeholder="请选择" @focus="sketchSpecFocus">
           <el-option v-for="item in sketchSpecs" :key="item.value"
                      :label="item.label" :value="item.value">
           </el-option>
@@ -78,8 +75,10 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitClick"
+        <el-button v-if="this.id !== -1" type="primary" @click="submitClick"
                    v-permission="{permission: '创建规格', type: 'disabled'}">更新</el-button>
+        <el-button v-else type="primary" @click="saveClick"
+                   v-permission="{permission: '创建规格', type: 'disabled'}">保存</el-button>
         <!--          <el-button type="primary" @click="resetForm('form')">重置</el-button>-->
         <el-button @click="resetForm('form')">重置</el-button>
       </el-form-item>
@@ -109,6 +108,8 @@ export default {
     if (this.id !== -1) {
       this.getSpuDetail(this.id)
       this.getCategories()
+    } else {
+      this.getCategories()
     }
   },
   methods: {
@@ -118,19 +119,47 @@ export default {
      */
     async getSpuDetail(id) {
       const res = await Spu.getSpuDetail(id)
+      console.log('从后端获取的spu数据：')
       console.log(res)
-      this.$data.formData = res
+      console.log('赋值之前的formData: ')
+      console.log(this.$data.formData)
+      // this.$data.formData = res
+      this.convert(res)
+      console.log('赋值res后的formData: ')
+      console.log(this.$data.formData)
       // 获取标签数据
       this.$data.dynamicTags = res.tag_list
-      this.$data.mainImgData = [{ display: res.img }]
-      this.$data.themeImgData = [{ display: res.for_theme_img }]
-      this.$data.rotationImgData = res.rotation_imgs ? res.rotation_imgs.map((it, index) => ({ id: index, display: it })) : []
-      this.$data.detailImgData = res.spu_detail_imgs ? res.spu_detail_imgs.map((it, index) => ({ id: index, display: it })) : []
+      this.mainImgData = [{ display: res.img }]
+      this.themeImgData = [{ display: res.spu_theme_img }]
+      this.rotationImgData = res.rotation_imgs ? res.rotation_imgs.map((it, index) => ({ id: index, display: it })) : []
+      this.detailImgData = res.spu_detail_imgs ? res.spu_detail_imgs.map((it, index) => ({ id: index, display: it })) : []
       this.initSpecs(res.spu_specs)
       this.initCategory(res.root_category_id, res.category_id)
-      // this.initDefaultSku(res.default_sku_id, res.default_sku)
+      this.initDefaultSku(res.default_sku_id, res.default_sku)
+      this.initDefaultSketchSpec(res.sketch_spec_id, res.default_sketch_spec)
       console.log('初始化的规格值：')
       console.log(this.$data.specs)
+    },
+    /**
+     * 将从后端查询出来的数据，转换成formData
+     */
+    convert(res) {
+      this.$data.formData.id = res.id
+      this.$data.formData.title = res.title
+      this.$data.formData.subtitle = res.subtitle
+      this.$data.formData.price = res.price
+      this.$data.formData.discount_price = res.discount_price
+      this.$data.formData.parent_category_id = res.category_id
+      this.$data.formData.root_category_id = res.root_category_id
+      this.$data.formData.category_name = res.category_name
+      this.$data.formData.default_sku = res.default_sku
+      this.$data.formData.default_sku_id = res.default_sku_id
+      this.$data.formData.sketch_spec = res.default_sketch_spec
+      this.$data.formData.sketch_spec_id = res.sketch_spec_id
+      this.$data.formData.online = res.online
+      this.$data.formData.tag_list = res.tag_list
+      this.$data.formData.spu_specs = res.spu_specs
+      this.$data.formData.description = res.description
     },
     /**
      * 初始化当前SPU的已选规格
@@ -148,16 +177,31 @@ export default {
      * 初始化默认sku
      */
     initDefaultSku(id, name) {
-      this.$data.selectedSku.value = id
-      this.$data.selectedSku.label = name
+      this.defaultSkuId = id
+      // 默认sku
+      this.$data.selectedSku = name
       console.log('初始化默认sku')
       console.log(this.$data.skukey)
       console.log(this.$data.skuValue)
     },
     /**
+     * 初始化可视化规格
+     */
+    initDefaultSketchSpec(id, name) {
+      this.$data.defaultSketchSpecId = id
+      this.$data.selectedSketchSpec = name
+    },
+    /**
      * 默认sku选择器,获得焦点时，触发的事件
      */
     async skuFocus() {
+      if (this.id === -1) {
+        this.$message({
+          message: '请先创建完成SPU及SKU后，再选择默认SKU',
+          type: 'warning',
+        })
+        return
+      }
       // 获取焦点后，需要从远程服务器获取当前SPU所拥有的SKU数据
       const res = await Sku.getSkusBySpuId(this.id)
       this.$data.defaultSkus = res
@@ -169,6 +213,13 @@ export default {
     async sketchSpecFocus() {
       // 先拿到当前spu所拥有的规格id
       const s = this.$data.specs
+      if (s.length < 1) {
+        this.$message({
+          message: '请先选择商品规格',
+          type: 'warning',
+        })
+        return
+      }
       // 拼接的可视化规格字符串
       let ids = String('')
       s.forEach(item => {
@@ -216,32 +267,217 @@ export default {
     },
 
     handleInputConfirm() {
-      let inputValue = this.inputValue
+      const { inputValue } = this
+      console.log('标签的inputValue: ')
+      console.log(inputValue)
       // 如果有值，则添加
       if (inputValue) {
         // 判断当前 spu 的 tag 数量是否 >= 3, 大于则不允许添加
         if (this.dynamicTags.length >= 3) {
+          console.log('标签数量大于3')
           this.$message.warning('tag 标签最多允许添加3个~')
         } else if (this.inputValue.length > 5) {
+          console.log('标签字数大于5')
           this.$message.warning('tag 标签最大字数为5个~')
         } else {
           this.dynamicTags.push(inputValue)
+          this.$data.formData.tag_list = this.dynamicTags
+          console.log('标签数据集：')
+          console.log(this.dynamicTags)
         }
       }
       this.inputVisible = false
       this.inputValue = ''
     },
-    submitClick() {
-      console.log('当前spu选定的规格：')
-      console.log(this.$data.specs)
-      console.log('当前spu选定的分类数据：')
-      console.log(this.$data.selectedCategory)
-      console.log('当前spu选定的默认sku: ')
-      console.log(this.$data.selectedSku)
-      console.log('当前spu选定的标签')
-      console.log(this.$data.formData.tag_list)
-      console.log('当前spu选定的可视化规格')
-      console.log(this.$data.selectedSketchSpec)
+    /**
+     * 提交时，获取默认sku数据
+     */
+    getDefaultSku() {
+      const type = typeof this.$data.selectedSku
+      let skuId = -1
+      if (type === 'string') {
+        // 需要从data中获取sku id
+        skuId = this.$data.defaultSkuId
+      }
+      if (type === 'number') {
+        // 直接拿到value 值就可以了
+        skuId = this.$data.selectedSku
+      }
+      if (skuId === -1) {
+        this.$data.formData.default_sku_id = null
+      } else {
+        this.$data.formData.default_sku_id = skuId
+      }
+    },
+    /**
+     * 获取当前 SPU 所属的分类信息
+     */
+    getBelongCategory() {
+      // eslint-disable-next-line prefer-destructuring
+      this.$data.formData.root_category_id = this.$data.selectedCategory[0]
+      // eslint-disable-next-line prefer-destructuring
+      this.$data.formData.parent_category_id = this.$data.selectedCategory[1]
+    },
+    /**
+     * 获取当前 SPU 选定的规格
+     */
+    getSelectedSpecs() {
+      const specArr = []
+      this.$data.specs.forEach(spec => {
+        specArr.push(spec[0])
+      })
+      if (specArr.length < 1) {
+        this.$message({
+          message: '请选择SPU规格',
+          type: 'warning',
+        })
+        throw new Error('规格未选择')
+      }
+      this.$data.formData.spu_specs = specArr
+    },
+    /**
+     * 获取可视化规格
+     */
+    getSketchSpec() {
+      const type = typeof this.$data.selectedSketchSpec
+      let specId = -1
+      if (type === 'string') {
+        // 需要从data中获取sku id
+        specId = this.$data.defaultSketchSpecId
+      }
+      if (type === 'number') {
+        // 直接拿到value 值就可以了
+        specId = this.$data.selectedSketchSpec
+      }
+      this.$data.formData.sketch_spec_id = specId
+    },
+    /**
+     * 获取主图
+     */
+    async getMainImg() {
+      const mainImgData = await this.$refs.mainImgRef.getValue()
+      if (mainImgData.length < 1) {
+        this.$message({
+          message: '请添加SPU主图片',
+          type: 'warning',
+        })
+        throw new Error('SPU主图未添加')
+      }
+      this.$data.formData.main_img_data = mainImgData[0].display
+    },
+    /**
+     * 获取主题图
+     * @returns {Promise<void>}
+     */
+    async getThemeImg() {
+      const themeImgData = await this.$refs.themeImgRef.getValue()
+      if (themeImgData.length < 1) {
+        this.$message({
+          message: '请添加主题图片',
+          type: 'warning',
+        })
+        throw new Error('主题图片未添加')
+      }
+      this.$data.formData.theme_img_data = themeImgData[0].display
+    },
+    /**
+     * 获取轮播图
+     * @returns {Promise<void>}
+     */
+    async getRotationImg() {
+      const rotationImgData = await this.$refs.rotationImgRef.getValue()
+      const rotationImgArr = []
+      rotationImgData.forEach(img => {
+        rotationImgArr.push(img.display)
+      })
+      if (rotationImgArr.length < 1) {
+        this.$message({
+          message: '请添加轮播图',
+          type: 'warning',
+        })
+        throw new Error('轮播图未添加')
+      }
+      this.$data.formData.rotation_img_data = rotationImgArr
+    },
+    /**
+     * 获取详情图
+     * @returns {Promise<void>}
+     */
+    async getDetailImg() {
+      const detailImgData = await this.$refs.detailImgRef.getValue()
+      const detailImgArr = []
+      detailImgData.forEach(img => {
+        detailImgArr.push(img.display)
+      })
+      if (detailImgArr.length < 1) {
+        this.$message({
+          message: '请添加详情图',
+          type: 'warning',
+        })
+        throw new Error('详情图未添加')
+      }
+      this.$data.formData.detail_img_data = detailImgArr
+    },
+    /**
+     * 更新 SPU 数据
+     */
+    async submitClick() {
+      try {
+        this.getSelectedSpecs()
+        this.getBelongCategory()
+        this.getDefaultSku()
+        this.getSketchSpec()
+        await this.getMainImg()
+        await this.getThemeImg()
+        await this.getRotationImg()
+        await this.getDetailImg()
+      } catch (error) {
+        console.log('捕获到异常')
+        return
+      }
+      const data = this.$data.formData
+      const res = await Spu.updateSpu(data)
+      if (res.code === 2) {
+        this.$message({
+          message: '更新成功',
+          type: 'success',
+        })
+      } else {
+        this.$message.error('更新失败，请稍后重试')
+      }
+      // 更新完成后，模拟手动触发“返回”按钮
+      this.rollbackClick()
+    },
+    /**
+     * 保存 SPU 数据
+     */
+    async saveClick() {
+      console.log('进入保存方法')
+      try {
+        this.getSelectedSpecs()
+        this.getBelongCategory()
+        this.getDefaultSku()
+        this.getSketchSpec()
+        await this.getMainImg()
+        await this.getThemeImg()
+        await this.getRotationImg()
+        await this.getDetailImg()
+      } catch (error) {
+        console.log('捕获到异常')
+        return
+      }
+      console.log(this.$data.formData)
+      // 发送请求
+      const res = await Spu.saveSpu(this.$data.formData)
+      if (res.code === 1) {
+        this.$message({
+          message: '创建成功',
+          type: 'success',
+        })
+      } else {
+        this.$message.error('创建失败，请稍后重试')
+      }
+      this.rollbackClick()
     }
   },
   data() {
@@ -252,9 +488,18 @@ export default {
         subtitle: null,
         price: null,
         discount_price: null,
+        parent_category_id: -1,
+        root_category_id: -1,
         category_name: null,
         default_sku: null,
-        online: null,
+        default_sku_id: -1,
+        sketch_spec: null,
+        sketch_spec_id: -1,
+        online: false,
+        main_img_data: null,
+        theme_img_data: null,
+        rotation_img_data: null,
+        detail_img_data: null,
         tag_list: null,
         spu_specs: null,
         description: null
@@ -271,6 +516,8 @@ export default {
       selectedCategory: [],
       // 双向绑定的默认sku
       selectedSku: null,
+      // 记录默认skuId
+      defaultSkuId: -1,
       // 默认sku数据集
       defaultSkus: [],
       // 标签tags数据集
@@ -283,6 +530,8 @@ export default {
       sketchSpecs: [],
       // 已选择的可视化规格
       selectedSketchSpec: null,
+      // 记录默认可视化规格id
+      defaultSketchSpecId: -1,
       // 级联选择器的属性
       cascaderProps: {
         multiple: true,

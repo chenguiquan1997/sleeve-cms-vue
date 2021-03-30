@@ -1,4 +1,4 @@
-import { get } from '../lin/plugin/axios'
+import { _delete, get, post, put } from '../lin/plugin/axios'
 
 class Spu {
   /**
@@ -19,6 +19,36 @@ class Spu {
    */
   static async getSpuDetail(id) {
     const res = await get(`v1/spu/detail/${id}`)
+    return res
+  }
+
+  /**
+   * 更新 SPU
+   * @param data
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async updateSpu(data) {
+    const res = await put('v1/spu/update', data)
+    return res
+  }
+
+  /**
+   * 创建 SPU
+   * @param data
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async saveSpu(data) {
+    const res = await post('v1/spu/save', data)
+    return res
+  }
+
+  /**
+   * 逻辑删除指定 spu
+   * @param id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async removeSpu(id) {
+    const res = await _delete(`/v1/spu/remove/${id}`)
     return res
   }
 }
