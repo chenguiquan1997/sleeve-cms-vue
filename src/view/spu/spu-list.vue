@@ -3,7 +3,7 @@
     <div class="top_container">
       <a class="title">SPU列表</a>
       <el-button class="add_category_btn" type="primary" plain @click="addSpu"
-                 v-permission="{permission: '创建Grid', type: 'disabled'}">
+                 v-permission="{permission: '创建SPU', type: 'disabled'}">
         创建 SPU</el-button>
     </div>
     <el-table :data="spuList" style="width: 100%" :stripe="true" height="600">
@@ -21,7 +21,7 @@
       <el-table-column label="操作" fixed="right" width="200">
         <template slot-scope="scope">
           <el-button type="primary" plain size="mini" @click="handerDetail(scope.row.id)">编辑</el-button>
-          <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
+          <el-button type="danger" v-permission="{ permission: '删除SPU', type: 'disabled' }"
                      size="mini" plain @click="handlerRemove(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>

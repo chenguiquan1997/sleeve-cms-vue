@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="top_container">
-      <div class="title">规格详情</div>
+      <div class="title">SPU 详情</div>
       <span class="rollback" @click="rollbackClick"><i class="iconfont icon-fanhui"></i> 返回</span>
     </div>
     <el-divider></el-divider>
@@ -76,9 +76,9 @@
       </el-form-item>
       <el-form-item>
         <el-button v-if="this.id !== -1" type="primary" @click="submitClick"
-                   v-permission="{permission: '创建规格', type: 'disabled'}">更新</el-button>
+                   v-permission="{permission: '创建SPU', type: 'disabled'}">更新</el-button>
         <el-button v-else type="primary" @click="saveClick"
-                   v-permission="{permission: '创建规格', type: 'disabled'}">保存</el-button>
+                   v-permission="{permission: '创建SPU', type: 'disabled'}">保存</el-button>
         <!--          <el-button type="primary" @click="resetForm('form')">重置</el-button>-->
         <el-button @click="resetForm('form')">重置</el-button>
       </el-form-item>

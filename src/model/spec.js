@@ -110,6 +110,16 @@ class Spec {
     const res = await get('v1/spec/key/sketch/ids', { ids })
     return res
   }
+
+  /**
+   * 根据规格id,获取对应的规格值列表
+   * @param id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async getSpecValues(id) {
+    const res = await get(`v1/spec/values/${id}`)
+    return res
+  }
 }
 export {
   // eslint-disable-next-line import/prefer-default-export
