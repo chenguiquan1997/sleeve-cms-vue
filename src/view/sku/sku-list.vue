@@ -2,9 +2,9 @@
   <div class="container" v-if="!detailFlag">
     <div class="top_container">
       <a class="title">SKU列表</a>
-      <el-button class="add_sku_btn" type="primary" plain @click="addSku"
-                 v-permission="{permission: '创建Sku', type: 'disabled'}">
-        创建 SKU</el-button>
+<!--      <el-button class="add_sku_btn" type="primary" plain @click="addSku"-->
+<!--                 v-permission="{permission: '创建Sku', type: 'disabled'}">-->
+<!--        创建 SKU</el-button>-->
     </div>
     <el-table :data="skuList" style="width: 100%" :stripe="true" height="600">
       <el-table-column prop="id" label="id" width="80"></el-table-column>
@@ -20,7 +20,7 @@
       <el-table-column prop="create_time" label="创建时间" width="150"></el-table-column>
       <el-table-column label="操作" fixed="right" width="200">
         <template slot-scope="scope">
-          <el-button type="primary" plain size="mini" @click="handerDetail(scope.row.id)">编辑</el-button>
+          <el-button type="primary" plain size="mini" @click="handerDetail(scope.row.id)">详情</el-button>
           <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
                      size="mini" plain @click="handlerRemove(scope.row.id)">删除</el-button>
         </template>

@@ -1,7 +1,12 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="!this.$data.skuDetailFlag">
     <div class="top_container">
-      <div class="title">SPU 详情</div>
+      <div class="left_container">
+        <div class="title">SPU 详情</div>
+        <el-button  v-if="this.id !== -1" class="add_sku_btn" type="primary" plain @click="addSku"
+                   v-permission="{permission: '创建Sku', type: 'disabled'}">
+          创建 SKU</el-button>
+      </div>
       <span class="rollback" @click="rollbackClick"><i class="iconfont icon-fanhui"></i> 返回</span>
     </div>
     <el-divider></el-divider>
@@ -84,6 +89,7 @@
       </el-form-item>
     </el-form>
   </div>
+  <sku-detail v-else :id="-1" :spu-id="this.id" :spu-name="this.$data.formData.title" @rollback-event="createSkuRollback"></sku-detail>
 </template>
 
 <script>
@@ -92,10 +98,11 @@ import { Spu } from '../../model/Spu'
 import { Spec } from '../../model/spec'
 import { Category } from '../../model/category'
 import { Sku } from '../../model/sku'
+import SkuDetail from '../sku/sku-detail'
 
 export default {
   name: 'spu-detail',
-  components: { UploadImgs },
+  components: { SkuDetail, UploadImgs },
   props: {
     id: {
       Type: Number,
@@ -478,6 +485,19 @@ export default {
         this.$message.error('创建失败，请稍后重试')
       }
       this.rollbackClick()
+    },
+    /**
+     * 创建 SKU
+     */
+    addSku() {
+      console.log('触发创建SKU操作')
+      this.$data.skuDetailFlag = true
+    },
+    /**
+     * 用户在创建 SKU 页面，点击 “返回” 按钮时，触发的事件
+     */
+    createSkuRollback() {
+      this.$data.skuDetailFlag = false
     }
   },
   data() {
@@ -553,7 +573,8 @@ export default {
             this.$message.error('获取规格信息失败，请检查网络')
           }
         }
-      }
+      },
+      skuDetailFlag: false
     }
   }
 }
@@ -567,16 +588,20 @@ export default {
     color: $theme;
     margin-top: 20px;
   }
+  .left_container {
+    display: flex;
+    align-items: center;
+  }
   .form_container {
     width: 650px;
   }
   .rollback {
     cursor: pointer;
+    text-align: center;
   }
   .title {
     text-align: center;
     color: $theme;
-    height: 30px;
   }
   .el-tag + .el-tag {
     margin-left: 10px;
@@ -592,5 +617,8 @@ export default {
     width: 90px;
     margin-left: 10px;
     vertical-align: bottom;
+  }
+  .add_sku_btn {
+    margin-left: 20px;
   }
 </style>

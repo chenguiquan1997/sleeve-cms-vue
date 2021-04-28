@@ -51,6 +51,16 @@ class Spu {
     const res = await _delete(`/v1/spu/remove/${id}`)
     return res
   }
+
+  /**
+   * 根据 spu id，查询所属 SPU
+   * @param id
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async searchSpuSpec(id) {
+    const res = await get(`/v1/spu/spec/${id}`)
+    return res
+  }
 }
 export {
   // eslint-disable-next-line import/prefer-default-export

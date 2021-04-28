@@ -17,6 +17,15 @@ const skuRouter = {
       inNav: true,
       icon: 'iconfont icon-tushuguanli',
     },
+    {
+      title: '创建sku',
+      type: 'tab',
+      name: 'createSku',
+      route: '/sku/create',
+      filePath: 'view/sku/sku-detail',
+      inNav: false,
+      icon: 'iconfont icon-tushuguanli',
+    },
   ],
 }
 export default skuRouter

@@ -1,28 +1,30 @@
 <template>
   <div class="container">
     <div class="top_container">
-      <div class="title">SKU 详情</div>
+      <div class="title" v-if="this.id !== -1">SKU 详情</div>
+      <div class="title" v-else>创建 SKU</div>
       <span class="rollback" @click="rollbackClick"><i class="iconfont icon-fanhui"></i> 返回</span>
     </div>
-    <el-divider></el-divider>
+    <el-divider class="divider"></el-divider>
     <el-form class="form_container" ref="form" :model="formData" label-position="left" label-width="80px">
       <el-form-item label="标题" prop="title">
         <el-input v-model="formData.title" placeholder="请输入标题"></el-input>
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input-number v-model="formData.price" @change="handleChangePrice" :precision="2" :min="1" :max="99999"></el-input-number>
+        <el-input-number v-model="formData.price" @change="handleChangePrice" :precision="2" :min="1" :max="99999.99"></el-input-number>
       </el-form-item>
       <el-form-item label="折扣价 " prop="discount_price">
-        <el-input-number v-model="formData.discount_price" @change="handleChangePrice" :precision="2" :min="0" :max="99999"></el-input-number>
+        <el-input-number v-model="formData.discount_price" @change="handleChangePrice" :precision="2" :min="0.00" :max="99999.00"></el-input-number>
       </el-form-item>
       <el-form-item label="SKU编码" prop="sku_code">
-        <el-input disabled v-model="formData.code"></el-input>
+        <el-input disabled v-model="formData.code" placeholder="无需填写，后台自动生成..."></el-input>
       </el-form-item>
       <el-form-item label="库存" prop="stock">
         <el-input-number v-model="formData.stock" @change="handleChangeStock" :min="1" :max="9999"></el-input-number>
       </el-form-item>
+<!--      如果是修改数据，那么当选择spu的时候，需要给用户一个友好的提示-->
       <el-form-item label="所属SPU" prop="belong_spu">
-<!--        <el-input></el-input>-->
+        <el-input v-model="formData.belong_spu" disabled placeholder="无需填写，后台自动生成..."></el-input>
       </el-form-item>
       <el-form-item label="是否上架" prop="online">
         <el-switch v-model="formData.online"
@@ -53,23 +55,44 @@
 </template>
 
 <script>
-import { Sku } from '../../model/sku'
-import UploadImgs from '../../component/base/upload-image/index'
-import { Spec } from '../../model/spec'
+  import { Sku } from '../../model/sku'
+  import UploadImgs from '../../component/base/upload-image/index'
+  import { Spec } from '../../model/spec'
+  import { Spu } from '../../model/Spu'
 
-export default {
+  export default {
   name: 'sku-detail',
   components: { UploadImgs },
   props: {
     id: {
       Default: -1,
       Type: Number
+    },
+    spuId: {
+      Default: -1,
+      Type: Number
+    },
+    spuName: {
+      Default: null,
+      Type: String
     }
   },
   created() {
+    console.log(`created:skuid值：${this.id}`)
   },
-  mounted() {
-    this.getDetailById(this.id)
+  async mounted() {
+    console.log(`skuid值：${this.id}`)
+    // 证明是更新 sku
+    if (this.id !== -1) {
+      this.getDetailById(this.id)
+    } else {
+      // 证明是创建 sku,
+      console.log('当前为创建sku逻辑')
+      console.log(`传入的spuId${this.spuId}`)
+      console.log(this.spuName)
+      const res = await Spu.searchSpuSpec(this.spuId)
+      this.$data.specKeys = res
+    }
   },
   methods: {
     /**
@@ -107,6 +130,7 @@ export default {
       this.$data.formData.id = res.id
       this.$data.formData.title = res.title
       this.$data.formData.belong_spu = res.belong_spu
+      this.$data.formData.spu_id = res.spu_id
       this.$data.formData.price = res.price
       this.$data.formData.discount_price = res.discount_price
       this.$data.formData.stock = res.stock
@@ -114,6 +138,7 @@ export default {
       this.$data.formData.code = res.code
       this.$data.specKeys = res.sku_specs
       this.$data.mainImgData = [{ display: res.img }]
+      console.log('刚赋值的spec:')
       console.log(this.$data.specKeys)
     },
     /**
@@ -136,9 +161,80 @@ export default {
       console.log(specArr)
       this.$data.specs = specArr
     },
-    submitClick() {
+    /**
+     * 获取主图
+     */
+    async getMainImg() {
+      const mainImgData = await this.$refs.mainImgRef.getValue()
+      if (mainImgData.length < 1) {
+        this.$message({
+          message: '请添加SKU主图片',
+          type: 'warning',
+        })
+        throw new Error('SKU主图未添加')
+      }
+      this.$data.formData.img = mainImgData[0].display
     },
+    /**
+     * 修改和保存时，处理当前sku选中的规格值
+     */
+    specHandler(specs) {
+      if (specs.length > 0) {
+        const newSpecObj = []
+        specs.forEach(spec => {
+          const newSpec = {}
+          newSpec.key_id = spec.key_id
+          newSpec.key_name = spec.key_name
+          const arr = spec.value_name.split('-')
+          // value_id, 如果不相等，则证明用户已经将规格值改变，需要替换规格值id
+          if (spec.value_id.toString() !== this.trim(arr[0])) {
+            console.log('进入替换规格值id: ')
+            newSpec.value_id = this.trim(arr[0])
+            newSpec.value_name = this.trim(arr[1])
+          } else {
+            console.log('规格值id相等，不进行替换：')
+            newSpec.value_id = spec.value_id
+            newSpec.value_name = this.trim(arr[1])
+          }
+          newSpecObj.push(newSpec)
+        })
+        return newSpecObj
+      }
+      this.$message.error('获取SKU规格错误')
+    },
+    /**
+     * 去除字符串两端的空格
+     */
+    trim(str) {
+      return str.replace(/^(\s|\xA0)+|(\s|\xA0)+$/g, '')
+    },
+    /**
+     * 更新 sku
+     */ async submitClick() {
+      // 对 img 进行赋值
+      this.getMainImg()
+      this.$data.formData.belong_specs = this.specHandler(this.$data.specKeys)
+      console.log('最终的formData：')
+      console.log(this.$data.formData)
+      const res = await Sku.updateSkuDetail(this.$data.formData)
+      console.log(res)
+      if (res.code === 2) {
+        this.$message({
+          message: '更新成功',
+          type: 'success',
+        })
+      } else {
+        this.$message.error('更新失败，请稍后重试')
+      }
+      this.rollbackClick()
+    },
+    /**
+     * 创建 sku
+     */
     saveClick() {
+      console.log('点击保存 sku 按钮')
+      console.log(this.$data.formData)
+      console.log(this.$data.specKeys)
     }
   },
   data() {
@@ -148,17 +244,19 @@ export default {
         img: null,
         title: null,
         belong_spu: null,
+        spu_id: null,
         price: null,
         discount_price: null,
         stock: null,
         online: false,
         code: null,
-        create_time: null
+        create_time: null,
+        belong_specs: []
       },
       // 当前sku所拥有的规格
       specKeys: [],
       mainImgData: [],
-      // 规格所拥有的规格值
+      // 规格所拥有的规格值，存放的是已经整理好的待选规格列表
       specs: []
     }
   }
@@ -172,6 +270,9 @@ export default {
     justify-content: space-between;
     color: $theme;
     margin-top: 20px;
+  }
+  .divider {
+    margin-top: 10px;
   }
   .form_container {
     width: 650px;

@@ -20,7 +20,7 @@
       <el-table-column prop="create_time" label="创建时间" width="150"></el-table-column>
       <el-table-column label="操作" fixed="right" width="200">
         <template slot-scope="scope">
-          <el-button type="primary" plain size="mini" @click="handerDetail(scope.row.id)">编辑</el-button>
+          <el-button type="primary" plain size="mini" @click="handerDetail(scope.row.id)">详情</el-button>
           <el-button type="danger" v-permission="{ permission: '删除SPU', type: 'disabled' }"
                      size="mini" plain @click="handlerRemove(scope.row.id)">删除</el-button>
         </template>

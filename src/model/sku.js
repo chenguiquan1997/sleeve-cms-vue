@@ -1,4 +1,4 @@
-import { get } from '../lin/plugin/axios'
+import { get, post, put } from '../lin/plugin/axios'
 
 class Sku {
   /**
@@ -29,6 +29,16 @@ class Sku {
    */
   static async getDetailById(id) {
     const res = get(`v1/sku/detail/${id}`)
+    return res
+  }
+
+  /**
+   * 更新 SKU
+   * @param data
+   * @returns {AxiosPromise<any>}
+   */
+  static async updateSkuDetail(data) {
+    const res = put('v1/sku/update', data)
     return res
   }
 }
