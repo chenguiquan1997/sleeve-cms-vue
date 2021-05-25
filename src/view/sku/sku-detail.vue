@@ -20,7 +20,7 @@
         <el-input disabled v-model="formData.code" placeholder="无需填写，后台自动生成..."></el-input>
       </el-form-item>
       <el-form-item label="库存" prop="stock">
-        <el-input-number v-model="formData.stock" @change="handleChangeStock" :min="1" :max="9999"></el-input-number>
+        <el-input-number v-model="formData.stock" @change="handleChangeStock" :min="0" :max="9999"></el-input-number>
       </el-form-item>
 <!--      如果是修改数据，那么当选择spu的时候，需要给用户一个友好的提示-->
       <el-form-item label="所属SPU" prop="belong_spu">
@@ -88,8 +88,8 @@
     } else {
       // 证明是创建 sku,
       console.log('当前为创建sku逻辑')
-      console.log(`传入的spuId${this.spuId}`)
-      console.log(this.spuName)
+      this.$data.formData.spu_id = this.spuId
+      this.$data.formData.belong_spu = this.spuName
       const res = await Spu.searchSpuSpec(this.spuId)
       this.$data.specKeys = res
     }
@@ -112,6 +112,13 @@
      */
     handleChangePrice() {
       console.log('更改价格时触发事件')
+      // 每次更改价格时，都需要判断，折扣价是否大于真实价格
+      if (this.formData.discount_price > this.formData.price) {
+        this.$message({
+          message: '商品的折扣价不可以高于价格',
+          type: 'warning',
+        })
+      }
     },
     /**
      * 获取sku详情
@@ -185,15 +192,40 @@
           const newSpec = {}
           newSpec.key_id = spec.key_id
           newSpec.key_name = spec.key_name
-          const arr = spec.value_name.split('-')
-          // value_id, 如果不相等，则证明用户已经将规格值改变，需要替换规格值id
-          if (spec.value_id.toString() !== this.trim(arr[0])) {
-            console.log('进入替换规格值id: ')
-            newSpec.value_id = this.trim(arr[0])
-            newSpec.value_name = this.trim(arr[1])
+          let arr = []
+          try {
+            arr = spec.value_name.split('-')
+          } catch (e) {
+            console.log('捕获到规格值不可拆分异常')
+            console.log(spec.key_name)
+            this.$message({
+              message: `请选择：${spec.key_name}`,
+              type: 'warning',
+            })
+            return
+          }
+          if (spec.value_name.length < 1) {
+            this.$message({
+              message: `请选择：${spec.key_name}`,
+              type: 'warning',
+            })
+            return
+          }
+          // 这一块逻辑是更新sku时，用到的
+          if (this.id !== -1) {
+            console.log('进入修改规格逻辑')
+            // value_id, 如果不相等，则证明用户已经将规格值改变，需要替换规格值id
+            if (spec.value_id.toString() !== this.trim(arr[0])) {
+              newSpec.value_id = this.trim(arr[0])
+              newSpec.value_name = this.trim(arr[1])
+            } else {
+              console.log('规格值id相等，不进行替换：')
+              newSpec.value_id = spec.value_id
+              newSpec.value_name = this.trim(arr[1])
+            }
           } else {
-            console.log('规格值id相等，不进行替换：')
-            newSpec.value_id = spec.value_id
+            console.log('进入创建规格逻辑')
+            newSpec.value_id = this.trim(arr[0])
             newSpec.value_name = this.trim(arr[1])
           }
           newSpecObj.push(newSpec)
@@ -210,7 +242,8 @@
     },
     /**
      * 更新 sku
-     */ async submitClick() {
+     */
+    async submitClick() {
       // 对 img 进行赋值
       this.getMainImg()
       this.$data.formData.belong_specs = this.specHandler(this.$data.specKeys)
@@ -229,19 +262,42 @@
       this.rollbackClick()
     },
     /**
+     * 校验 Title
+     */
+    checkTitle() {
+      if (this.$data.formData.title === null || this.$data.formData.length < 1) {
+        this.$message({
+          message: '请添加SKU标题',
+          type: 'warning',
+        })
+        throw new Error('SKU标题未添加')
+      }
+    },
+    /**
      * 创建 sku
      */
-    saveClick() {
+    async saveClick() {
       console.log('点击保存 sku 按钮')
-      console.log(this.$data.formData)
-      console.log(this.$data.specKeys)
+      this.getMainImg()
+      this.$data.formData.belong_specs = this.specHandler(this.$data.specKeys)
+      this.checkTitle()
+      const res = await Sku.saveSku(this.$data.formData)
+      if (res.code === 1) {
+        this.$message({
+          message: '创建成功',
+          type: 'success',
+        })
+      } else {
+        this.$message.error('创建失败，请稍后重试')
+      }
+      this.rollbackClick()
     }
   },
   data() {
     return {
       formData: {
         id: null,
-        img: null,
+        img: '',
         title: null,
         belong_spu: null,
         spu_id: null,

@@ -3,9 +3,9 @@
     <div class="top_container">
       <div class="left_container">
         <div class="title">SPU 详情</div>
-        <el-button  v-if="this.id !== -1" class="add_sku_btn" type="primary" plain @click="addSku"
-                   v-permission="{permission: '创建Sku', type: 'disabled'}">
-          创建 SKU</el-button>
+<!--        <el-button  v-if="this.id !== -1" class="add_sku_btn" type="primary" plain @click="addSku"-->
+<!--                   v-permission="{permission: '创建Sku', type: 'disabled'}">-->
+<!--          创建 SKU</el-button>-->
       </div>
       <span class="rollback" @click="rollbackClick"><i class="iconfont icon-fanhui"></i> 返回</span>
     </div>
@@ -88,6 +88,15 @@
         <el-button @click="resetForm('form')">重置</el-button>
       </el-form-item>
     </el-form>
+    <!--SKU item-->
+    <el-divider class="item-divider"></el-divider>
+    <div v-if="!this.hideFlag" class="item_top_container">
+      <div class="title">SKU-Item列表</div>
+      <el-button class="add_item_btn" type="primary" plain @click="addSku"
+                 v-permission="{permission: '创建SKU', type: 'disabled'}">
+        创建 SKU</el-button>
+    </div>
+    <sku-list :flag="false" :spu-id="this.id" @hide-event="hideTitle" @show-event="showTitle"></sku-list>
   </div>
   <sku-detail v-else :id="-1" :spu-id="this.id" :spu-name="this.$data.formData.title" @rollback-event="createSkuRollback"></sku-detail>
 </template>
@@ -99,10 +108,11 @@ import { Spec } from '../../model/spec'
 import { Category } from '../../model/category'
 import { Sku } from '../../model/sku'
 import SkuDetail from '../sku/sku-detail'
+import SkuList from '../sku/sku-list'
 
 export default {
   name: 'spu-detail',
-  components: { SkuDetail, UploadImgs },
+  components: { SkuList, SkuDetail, UploadImgs },
   props: {
     id: {
       Type: Number,
@@ -498,6 +508,18 @@ export default {
      */
     createSkuRollback() {
       this.$data.skuDetailFlag = false
+    },
+    /**
+     * 监听一个事件,用于在spu-detail页面，点击"详情"按钮时，隐藏上面的title
+     */
+    hideTitle() {
+      this.$data.hideFlag = true
+    },
+    /**
+     * 监听一个事件,用于在sku-detail页面，点击"返回"按钮时，显示上面的title
+     */
+    showTitle() {
+      this.$data.hideFlag = false
     }
   },
   data() {
@@ -574,7 +596,9 @@ export default {
           }
         }
       },
-      skuDetailFlag: false
+      skuDetailFlag: false,
+      // 用于显示和隐藏 sku-item 的 title 的标记
+      hideFlag: false
     }
   }
 }
@@ -619,6 +643,18 @@ export default {
     vertical-align: bottom;
   }
   .add_sku_btn {
+    margin-left: 20px;
+  }
+  .item_top_container {
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-left: 30px;
+  }
+  .add_item_btn {
+    height: 32px;
     margin-left: 20px;
   }
 </style>

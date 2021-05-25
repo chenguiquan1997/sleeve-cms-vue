@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if="!detailFlag">
-    <div class="top_container">
+    <div v-if="this.flag" class="top_container">
       <a class="title">SKU列表</a>
 <!--      <el-button class="add_sku_btn" type="primary" plain @click="addSku"-->
 <!--                 v-permission="{permission: '创建Sku', type: 'disabled'}">-->
@@ -13,7 +13,7 @@
                   style="width: 80px; height: 80px"></el-image>
       </el-table-column>
       <el-table-column prop="title" label="标题" width="180"></el-table-column>
-      <el-table-column prop="belong_spu" label="所属SPU" width="150"></el-table-column>
+      <el-table-column v-if="this.flag" prop="belong_spu" label="所属SPU" width="150"></el-table-column>
       <el-table-column prop="price" label="价格(元)" width="100"></el-table-column>
       <el-table-column prop="stock" label="库存" width="100"></el-table-column>
       <el-table-column prop="online" label="是否上架" width="100"></el-table-column>
@@ -42,10 +42,21 @@ import SkuDetail from './sku-detail'
 export default {
   name: 'sku-list',
   components: { SkuDetail, Page },
+  props: {
+    // flag = true, 默认是正常显示sku列表，flag = false, 表示在spu-detail页面中显示
+    flag: {
+      Type: Boolean,
+      default: true
+    },
+    spuId: {
+      Type: Number,
+      default: -1
+    }
+  },
   created() {
   },
   mounted() {
-    this.getSkuSummaryList(1, 5)
+    this.getSkuSummaryList(1, this.$data.pageSize)
   },
   methods: {
     /**
@@ -55,10 +66,17 @@ export default {
      * @returns {Promise<*>}
      */
     async getSkuSummaryList(page, count) {
-      const res = await Sku.getSkuSummary(page, count)
+      let res
+      if (this.flag && this.spuId === -1) {
+        res = await Sku.getSkuSummary(page, count)
+      } else {
+        res = await Sku.getSkuSummaryBySpu(this.spuId, page, count)
+      }
       this.formateDate(res.items)
       this.formateOnline(res.items)
       this.$data.skuList = res.items
+      this.$data.total = res.total
+      this.$data.page = res.page
       console.log(res)
       return res
     },
@@ -78,9 +96,9 @@ export default {
     formateOnline(items) {
       items.forEach(item => {
         if (item.online) {
-          item.online = '上线'
+          item.online = '上架'
         } else {
-          item.online = '下线'
+          item.online = '下架'
         }
       })
     },
@@ -91,6 +109,8 @@ export default {
       console.log('触发编辑')
       this.$data.detailFlag = true
       this.$data.id = id
+      // 抛出一个事件,用于在spu-detail页面，点击"详情"按钮时，隐藏上面的title
+      this.$emit('hide-event')
     },
     /**
      * 执行删除操作
@@ -98,7 +118,12 @@ export default {
     handlerRemove() {
       console.log()
     },
-    pageEmit() {
+    /**
+     * 点击分页时触发
+     */
+    pageEmit(page) {
+      this.getSkuSummaryList(page, this.$data.pageSize)
+      this.$data.page = page
     },
     /**
      * 监听detail页面发出的“返回”事件
@@ -107,6 +132,8 @@ export default {
       console.log('监听到返回事件')
       this.$data.detailFlag = false
       this.$data.id = -1
+      this.getSkuSummaryList(this.$data.page, this.$data.pageSize)
+      this.$emit('show-event')
     }
   },
   data() {
@@ -114,7 +141,8 @@ export default {
       id: -1,
       skuList: [],
       total: 0,
-      pageSize: 1,
+      pageSize: 5,
+      page: 1,
       removeFlag: false,
       detailFlag: false
     }

@@ -51,7 +51,7 @@ export default {
      * 获取六宫格数据
      */
     async getGrids() {
-      let res = await Grid.getGrid()
+      const res = await Grid.getGrid()
       console.log('grid数据：')
       console.log(res)
       this.formatDateAndOnline(res)
@@ -95,7 +95,7 @@ export default {
     async handlerRemoveItem(id) {
       console.log('触发删除操作')
       console.log(id)
-      let res = await Category.removeGridById(id)
+      const res = await Category.removeGridById(id)
       this.$message({
         type: res.code === 3 ? 'success' : 'error',
         message: res.code === 3 ? '删除成功!' : '删除失败，请稍后重试~'

@@ -1,7 +1,7 @@
 const ChartsRouter = {
   route: '/dashboard',
   name: 'DashBoard',
-  title: '订单分析',
+  title: '数据分析',
   type: 'view',
   icon: 'iconfont icon-weibiaoti--',
   filePath: 'plugin/chart/view/chart.vue',

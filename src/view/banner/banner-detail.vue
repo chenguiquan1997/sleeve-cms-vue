@@ -51,7 +51,7 @@
       <el-table-column prop="create_time" label="创建时间" width="150"></el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
-          <el-button @click="handlerEditItem(scope.row)" type="primary" size="mini">编辑</el-button>
+          <el-button @click="handlerEditItem(scope.row)" type="primary" size="mini">详情</el-button>
           <el-button type="danger" v-permission="{ permission: '删除Banner', type: 'disabled' }"
                      size="mini" plain @click="handlerRemoveItem(scope.row.id)">删除</el-button>
         </template>

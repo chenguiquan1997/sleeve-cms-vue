@@ -120,6 +120,16 @@ class Spec {
     const res = await get(`v1/spec/values/${id}`)
     return res
   }
+
+  /**
+   * 创建规格值
+   * @param data
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  static async addSpecValue(data) {
+    const res = await post('v1/spec/value/save', data)
+    return res
+  }
 }
 export {
   // eslint-disable-next-line import/prefer-default-export

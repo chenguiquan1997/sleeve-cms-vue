@@ -76,9 +76,9 @@ export default {
     formatOnline(items) {
       items.forEach(item => {
         if (item.online) {
-          item.online = '上线'
+          item.online = '上架'
         } else {
-          item.online = '下线'
+          item.online = '下架'
         }
       })
     },

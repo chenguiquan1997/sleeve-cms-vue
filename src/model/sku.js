@@ -23,6 +23,18 @@ class Sku {
   }
 
   /**
+   * 分页查询指定Spu下的sku列表
+   * @param spuId spuid
+   * @param page 当前数据页
+   * @param count 当前数据页的数据量
+   * @returns {AxiosPromise<any>}
+   */
+  static async getSkuSummaryBySpu(spuId, page = 1, count = 5) {
+    const res = get(`v1/sku/summary/${spuId}`, { page, count })
+    return res
+  }
+
+  /**
    * 根据id，获取指定sku详情
    * @param id  skuId
    * @returns {AxiosPromise<any>}
@@ -39,6 +51,16 @@ class Sku {
    */
   static async updateSkuDetail(data) {
     const res = put('v1/sku/update', data)
+    return res
+  }
+
+  /**
+   * 创建 SKU
+   * @param data
+   * @returns {AxiosPromise<any>}
+   */
+  static async saveSku(data) {
+    const res = post('v1/sku/save', data)
     return res
   }
 }

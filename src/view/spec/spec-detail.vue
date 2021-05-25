@@ -57,7 +57,7 @@
       </el-col>
     </el-row>
     <spec-value-edit :dialog-form-visible="this.$data.showDialog" :id="this.$data.valueId"
-                     @spec-value-cancel-event="specValueCancel"></spec-value-edit>
+                     :spec-id="this.$data.keyId" @spec-value-cancel-event="specValueCancel"></spec-value-edit>
   </div>
 </template>
 
@@ -89,7 +89,7 @@ export default {
     * 根据规格id,获取规格值
     * */
     async getSpecValue(id, page, size) {
-      let res = await Spec.getSpecValueById(id, page, size)
+      const res = await Spec.getSpecValueById(id, page, size)
       console.log('规格值列表：')
       console.log(res)
       this.formatDate(res.items)
@@ -109,7 +109,7 @@ export default {
      * 根据规格id,查询指定规格
      */
     async getSpecKeyDetail(id) {
-      let spec = await Spec.getSpecDetailById(id)
+      const spec = await Spec.getSpecDetailById(id)
       spec.create_time = getSlashYMDHMS(spec.create_time)
       this.$data.formData = spec
     },
@@ -124,7 +124,7 @@ export default {
      */
     async submitClick() {
       console.log(this.$data.formData)
-      let res = await Spec.updateSpecKey(this.$data.formData)
+      const res = await Spec.updateSpecKey(this.$data.formData)
       console.log(res)
       this.$message({
         type: res.code === 2 ? 'success' : 'error',
@@ -140,6 +140,10 @@ export default {
      * 添加规格值
      */
     addSpecValue() {
+      console.log('触发添加规格值操作')
+      //  需要传入规格id
+      this.$data.showDialog = true
+      this.$data.keyId = this.id
     },
     /**
      * 点击规格值中的“编辑”按钮
@@ -189,7 +193,8 @@ export default {
       pageSize: 8,
       removeFlag: false,
       showDialog: false,
-      valueId: -1
+      valueId: -1,
+      keyId: -1
     }
   }
 }

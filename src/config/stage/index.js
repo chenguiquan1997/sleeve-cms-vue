@@ -11,6 +11,7 @@ import skuRouter from './sku'
 import spuRouter from './spu'
 import themeRouter from './theme'
 import activityRouter from './activity'
+import customerRouter from './customer'
 
 // eslint-disable-next-line import/no-mutable-exports
 let homeRouter = [
@@ -61,7 +62,8 @@ let homeRouter = [
   skuRouter,
   spuRouter,
   themeRouter,
-  activityRouter
+  activityRouter,
+  customerRouter
 ]
 
 const plugins = [...pluginsConfig]
