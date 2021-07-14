@@ -9,8 +9,8 @@
     <el-table :data="gridList" style="width: 100%" :stripe="true">
       <el-table-column fixed prop="id" label="id" width="100"></el-table-column>
       <el-table-column prop="grid_img" label="图片" width="100">
-        <el-image v-if="scope.row.img" slot-scope="scope"
-                  :src="scope.row.img" style="max-width: 100px;"></el-image>
+        <el-image v-if="scope.row.grid_img" slot-scope="scope"
+                  :src="scope.row.grid_img" style="max-width: 100px;"></el-image>
       </el-table-column>
       <el-table-column prop="name" label="分类" width="150"></el-table-column>
       <el-table-column prop="grid_online" label="状态" width="150"></el-table-column>
